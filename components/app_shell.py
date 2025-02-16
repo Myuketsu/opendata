@@ -5,7 +5,7 @@ import plotly.io as pio
 
 # --- THEME TOGGLE --- #
 
-dmc.add_figure_templates(default='mantine_light')
+dmc.add_figure_templates(default="mantine_dark")
 
 def theme_toggle() -> dmc.Switch:
     '''
@@ -101,7 +101,17 @@ def create_app_shell_navbar_children() -> list[dmc.NavLink, dmc.Divider]:
             ],
             gap='xs',
             pb=5
-        ), labelPosition='left', mt='xl')
+        ), labelPosition='left', mt='xl'),
+        dmc.NavLink(
+            label='Bruit & Air',
+            leftSection=DashIconify(
+                icon='material-symbols:air-rounded',
+                width=23,
+                color=dmc.DEFAULT_THEME['colors']['blue'][6]
+            ),
+            href='/noise_air',
+            id={'type': 'navlink_navbar', 'index': '/noise_air'}
+        ),
     ] + [
         dmc.NavLink(
             label=f'Variable {i + 1}',
@@ -201,9 +211,10 @@ def update_navlink(pathname) -> list[bool]:
     return [control['id']['index'] == pathname for control in callback_context.outputs_list]
 
 @callback(
-    Output({'type': 'graph', 'index': ALL}, 'figure'),
+    Output({'type': 'graph', 'index': ALL}, 'figure', allow_duplicate=True),
     Input('mantine-provider', 'forceColorScheme'),
     State({'type': 'graph', 'index': ALL}, 'id'),
+    prevent_initial_call=True
 )
 def update_figure(theme, ids) -> list[Patch]:
     # template must be template object rather than just the template string name

@@ -18,7 +18,7 @@ def get_color_theme(color_scheme: str):
 
 
 def histo_air_rang(
-    gdf: gpd.GeoDataFrame, pollutant: str, color_scheme: str = "dark"
+    gdf: gpd.GeoDataFrame, pollutant: str, x: list[float], color_scheme: str = "dark"
 ) -> go.Figure:
     if pollutant not in ["NO2", "PM2_5", "PM10"]:
         raise ValueError(f"pollutant {pollutant} not in available pollutants.")
@@ -36,12 +36,31 @@ def histo_air_rang(
         yaxis_title=f"Somme des valeurs du polluant {pollutant_display}",
         xaxis_title=f"Fourchette de valeurs du polluant {pollutant_display}, en moyenne annuelle [µg/m3]",
     )
+    fig.add_vline(
+        x=x[0],
+        line_dash="dash",
+        line_color="orange",
+        annotation_text=" Valeurs guides de l’OMS",
+        annotation_position="top",
+    )
+    fig.add_vline(
+        x=x[1],
+        line_dash="dash",
+        line_color="red",
+        annotation_text=" Normes de l’Union européenne",
+        annotation_position="top right",
+    )
     return fig
 
 
-def map_air_quality(gdf: gpd.GeoDataFrame, polluant: str) -> go.Figure:
+def map_air_quality(
+    gdf: gpd.GeoDataFrame, gdf_json: str, polluant: str
+) -> go.Figure:
     map = folium.Map(
-        location=list(CENTER_BARCELONA.values()), tiles="CartoDB Positron", zoom_start=12.3
+        location=list(CENTER_BARCELONA.values()),
+        tiles="CartoDB Positron",
+        zoom_start=12.3,
+        prefer_canvas=True,
     )
 
     # Define a color map for NO2 levels
@@ -49,21 +68,23 @@ def map_air_quality(gdf: gpd.GeoDataFrame, polluant: str) -> go.Figure:
 
     def style_function(feature):
         return {
-            'fillColor': color_map.get(feature['properties'][polluant], 'gray'),
-            'color': color_map.get(feature['properties'][polluant], 'gray'),
-            'weight': 2,
-            'fillOpacity': 0.6,
+            "fillColor": color_map.get(feature["properties"][polluant], "gray"),
+            "color": color_map.get(feature["properties"][polluant], "gray"),
+            "weight": 2,
+            "fillOpacity": 0.6,
         }
 
     folium.GeoJson(
-        gdf.to_json(),
+        gdf_json,
         name="Air Quality",
-        tooltip=folium.GeoJsonTooltip(fields=[polluant], aliases=[polluant.replace("_", ".")]),
-        style_function=style_function
+        tooltip=folium.GeoJsonTooltip(
+            fields=[polluant], aliases=[polluant.replace("_", ".")]
+        ),
+        style_function=style_function,
     ).add_to(map)
 
     # Add legend
-    legend_html = f'''
+    legend_html = f"""
     <div style="position: fixed; 
                 top: 10px; left: 50px; 
                 border: 1px solid grey; border-radius: 5px; padding: 1px 3px;
@@ -81,7 +102,7 @@ def map_air_quality(gdf: gpd.GeoDataFrame, polluant: str) -> go.Figure:
         <b>{polluant.replace("_", ".")}</b><br>
         {'<br>'.join(f'<i style="background:{color_map[cat]}">&nbsp;&nbsp;&nbsp;&nbsp;</i> {cat}' for cat in gdf[polluant].cat.categories)}<br>
     </div>
-    '''
+    """
 
     map.get_root().html.add_child(folium.Element(legend_html))
 

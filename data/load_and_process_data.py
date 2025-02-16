@@ -77,3 +77,4 @@ def load_air_data() -> gpd.GeoDataFrame:
 
 
 gdf_air = load_air_data()
+gdf_json = gdf_air.to_json()

@@ -1,6 +1,7 @@
 import pandas as pd
 import geopandas as gpd
 from shapely import wkt
+import json
 
 DATA_PATH = "./data/"
 
@@ -78,3 +79,87 @@ def load_air_data() -> gpd.GeoDataFrame:
 
 gdf_air = load_air_data()
 gdf_json = gdf_air.to_json()
+
+
+# --- Transport DATA ---
+
+
+def load_transport_age_data() -> gpd.GeoDataFrame:
+    vage_df = pd.read_csv(
+        DATA_PATH + "/age_of_vehicle/2023/2023_Antiguitat_tipus_vehicle.csv"
+    )
+    district_df = pd.read_csv(
+        DATA_PATH + "/district_zone/BarcelonaCiutat_Districtes.csv"
+    )
+
+    total_vehicles_per_district = (
+        vage_df.groupby(["Nom_Districte"]).Nombre.sum().reset_index()
+    )
+    total_vehicles_per_district.columns = ["Nom_Districte", "Total_Vehicles"]
+
+    old_vehicles_per_district = (
+        vage_df[vage_df.Antiguitat == "MÃ©s de 20 anys"]
+        .groupby(["Nom_Districte"])
+        .Nombre.sum()
+        .reset_index()
+    )
+    old_vehicles_per_district.columns = ["Nom_Districte", "Vehicles_20_Any"]
+
+    merged = total_vehicles_per_district.merge(
+        old_vehicles_per_district, on="Nom_Districte", how="left"
+    )
+    merged["Percentage"] = (merged["Vehicles_20_Any"] / merged["Total_Vehicles"]) * 100
+    merged["Percentage"] = merged["Percentage"].map("{:,.2f}".format)
+    merged = merged[merged.Nom_Districte != "No consta"]
+    merged["Percentage"] = merged["Percentage"].astype(float)
+
+    gdf = convert_wkt_to_geometry(district_df, "geometria_wgs84")
+    gdf = gdf.rename(columns={"nom_districte": "Nom_Districte"})
+
+    gdf_merged = gdf.merge(merged, on="Nom_Districte", how="left")
+
+    return gdf_merged, json.loads(gdf_merged.to_json())
+
+
+gdf_transport_age, gdf_transport_age_json = load_transport_age_data()
+
+
+def load_transport_type_data() -> gpd.GeoDataFrame:
+    vtype_df = pd.read_csv(
+        DATA_PATH + "/type_of_vehicle/2023/2023_Parc_vehicles_tipus_propulsio.csv"
+    )
+    district_df = pd.read_csv(
+        DATA_PATH + "/district_zone/BarcelonaCiutat_Districtes.csv"
+    )
+
+    vehuicles_per_district = (
+        vtype_df.groupby(["Nom_Districte"]).Nombre.sum().reset_index()
+    )
+    vehuicles_per_district.columns = ["Nom_Districte", "Total_Vehicles"]
+
+    green_vehicles_per_district = (
+        vtype_df[
+            (vtype_df.Tipus_Propulsio == "Elèctrica")
+            | (vtype_df.Tipus_Propulsio == "Híbrid")
+        ]
+        .groupby(["Nom_Districte"])
+        .Nombre.sum()
+        .reset_index()
+    )
+    green_vehicles_per_district.columns = ["Nom_Districte", "Green_Vehicles"]
+
+    merged = vehuicles_per_district.merge(
+        green_vehicles_per_district, on="Nom_Districte", how="left"
+    )
+    merged["Percentage"] = (merged["Green_Vehicles"] / merged["Total_Vehicles"]) * 100
+    merged["Percentage"] = merged["Percentage"].map("{:,.2f}".format)
+
+    gdf = convert_wkt_to_geometry(district_df, "geometria_wgs84")
+    gdf = gdf.rename(columns={"nom_districte": "Nom_Districte"})
+
+    gdf_merged = gdf.merge(merged, on="Nom_Districte", how="left")
+
+    return gdf_merged, json.loads(gdf_merged.to_json())
+
+
+gdf_transport_type, gdf_transport_type_json = load_transport_type_data()

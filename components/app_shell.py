@@ -112,6 +112,16 @@ def create_app_shell_navbar_children() -> list[dmc.NavLink, dmc.Divider]:
             href='/noise_air',
             id={'type': 'navlink_navbar', 'index': '/noise_air'}
         ),
+        dmc.NavLink(
+            label='Nature',
+            leftSection=DashIconify(
+                icon='material-symbols:park-outline-rounded',
+                width=23,
+                color=dmc.DEFAULT_THEME['colors']['blue'][6]
+            ),
+            href='/nature',
+            id={'type': 'navlink_navbar', 'index': '/nature'}
+        ),
     ] + [
         dmc.NavLink(
             label=f'Variable {i + 1}',

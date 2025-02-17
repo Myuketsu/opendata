@@ -104,31 +104,31 @@ def map_transport_kmeans(
     gdf: gpd.GeoDataFrame, gdf_json: str, color_scheme: str = "dark"
 ) -> go.Figure:
     cluster_colors = {
-        "0": "#1E3A8A",  # Deep Royal Blue
-        "1": "#3B82F6",  # Bright Vivid Blue
-        "2": "#60A5FA",  # Light Sky Blue
+        "0": "#1E3A8A",
+        "1": "#3B82F6",
+        "2": "#60A5FA",
     }
 
     gdf["Cluster"] = gdf["Cluster"].astype(str)
 
-    gdf["Color"] = gdf["Cluster"].map(cluster_colors)
+    colorscale = [
+        (i / (len(cluster_colors) - 1), color)
+        for i, color in enumerate(cluster_colors.values())
+    ]
 
-    fig = go.Figure()
-
-    for cluster, color in cluster_colors.items():
-        cluster_data = gdf[gdf["Cluster"] == cluster]
-
-        fig.add_trace(
-            go.Choroplethmapbox(
-                geojson=gdf_json,
-                locations=cluster_data.index,
-                z=[int(cluster)] * len(cluster_data),
-                colorscale=[[0, color], [1, color]],
-                marker_opacity=0.7,
-                marker_line_width=0.5,
-                showscale=False,
-            )
+    fig = go.Figure(
+        go.Choroplethmapbox(
+            geojson=gdf_json,
+            locations=gdf.index,
+            z=gdf["Cluster"].astype(int),
+            colorscale=colorscale,
+            marker_opacity=0.7,
+            marker_line_width=0.5,
+            showscale=False,
+            colorbar_title="Clusters",
+            text=gdf["Nom_Districte"] + "<br>Cluster: " + gdf["Cluster"],
         )
+    )
 
     for cluster, color in cluster_colors.items():
         fig.add_trace(
@@ -138,6 +138,7 @@ def map_transport_kmeans(
                 mode="markers",
                 marker=dict(size=15, color=color),
                 name=f"Cluster {cluster}",
+
             )
         )
 

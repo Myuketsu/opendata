@@ -97,37 +97,31 @@ def create_app_shell_navbar_children() -> list[dmc.NavLink, dmc.Divider]:
         dmc.Divider(label=dmc.Group(
             [
                 DashIconify(icon='material-symbols-light:feature-search-outline-rounded', width=20),
-                dmc.Text('Variables')
+                dmc.Text('Thèmes')
             ],
             gap='xs',
             pb=5
         ), labelPosition='left', mt='xl'),
         dmc.NavLink(
-            label='Bruit & Air',
+            label='Qualité de vie',
             leftSection=DashIconify(
-                icon='material-symbols:air-rounded',
+                icon='game-icons:life-tap',
                 width=23,
                 color=dmc.DEFAULT_THEME['colors']['blue'][6]
             ),
-            href='/noise_air',
-            id={'type': 'navlink_navbar', 'index': '/noise_air'}
+            href='/life_quality',
+            id={'type': 'navlink_navbar', 'index': '/life_quality'}
         ),
         dmc.NavLink(
-            label='Nature',
+            label='Socio-économique',
             leftSection=DashIconify(
-                icon='material-symbols:park-outline-rounded',
+                icon='streamline:decent-work-and-economic-growth',
                 width=23,
                 color=dmc.DEFAULT_THEME['colors']['blue'][6]
             ),
-            href='/nature',
-            id={'type': 'navlink_navbar', 'index': '/nature'}
+            href='/socio-economic',
+            id={'type': 'navlink_navbar', 'index': '/socio-economic'}
         ),
-    ] + [
-        dmc.NavLink(
-            label=f'Variable {i + 1}',
-            leftSection=DashIconify(icon='nonicons:not-found-16'),
-            id={'type': 'navlink_navbar', 'index': f'/none-{i}'}
-        ) for i in range(4)
     ]
 
 def create_app_shell() -> dmc.AppShell:

@@ -2,7 +2,7 @@ import geopandas as gpd
 import plotly.express as px
 import plotly.graph_objects as go
 
-CENTER_BARCELONA = {"lat": 41.3951, "lon": 2.1234}
+CENTER_BARCELONA = {"lat": 41.3951, "lon": 2.1334}
 
 # --- Transport ---
 

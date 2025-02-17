@@ -197,3 +197,14 @@ gdf_transport_type, gdf_transport_type_json = load_transport_type_data()
 gdf_transport_kmeans, gdf_transport_kmeans_json = load_kmeans_data(
     gdf_transport_age, gdf_transport_type
 )
+
+pourcentage_vehicules_20_ans = (
+    gdf_transport_age.Vehicles_20_Any.sum()
+    / gdf_transport_age.Total_Vehicles.sum()
+    * 100
+)
+pourcentage_vehicules_verts = (
+    gdf_transport_type.Green_Vehicles.sum()
+    / gdf_transport_type.Total_Vehicles.sum()
+    * 100
+)

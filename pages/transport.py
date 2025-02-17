@@ -7,12 +7,20 @@ from data.load_and_process_data import (
     gdf_transport_age_json,
     gdf_transport_type,
     gdf_transport_type_json,
+    gdf_transport_pop,
+    gdf_transport_pop_json,
     gdf_transport_kmeans,
     gdf_transport_kmeans_json,
     pourcentage_vehicules_20_ans,
     pourcentage_vehicules_verts,
+    nombre_vehicules_par_100_habitants,
 )
-from view.transport import map_transport_age, map_transport_type, map_transport_kmeans
+from view.transport import (
+    map_transport_age,
+    map_transport_type,
+    map_transport_kmeans,
+    map_transport_pop,
+)
 
 register_page(__name__, path="/transport", name="Transport", title="OPENDATA")
 
@@ -44,6 +52,8 @@ def layout():
                 dmc.Divider(),
                 transport_type_section(),
                 dmc.Divider(),
+                transport_pop_section(),
+                dmc.Divider(),
                 transport_kmeans_section(),
             ]
         ),
@@ -72,6 +82,10 @@ def get_transport_stats_table(
                     [
                         "Pourcentage de véhicules verts",
                         f"{pourcentage_vehicules_verts:.2f}%",
+                    ],
+                    [
+                        "Nombre de véhicules par 100 habitants",
+                        f"{nombre_vehicules_par_100_habitants:.2f}",
                     ],
                 ],
             },
@@ -157,6 +171,46 @@ def transport_type_section():
     )
 
 
+def transport_pop_section():
+    return dmc.Stack(
+        [
+            dmc.SimpleGrid(
+                [
+                    dmc.Text(
+                        [
+                            html.H4(
+                                "🚗 Analyse de la densité de véhicules",
+                                className="card-title",
+                            ),
+                            html.P(
+                                "Cette carte montre le nombre de véhicules par 100 habitants par district. "
+                                "Les zones avec une forte densité de véhicules peuvent être sujettes à une "
+                                "pollution atmosphérique plus élevée et à des embouteillages.",
+                                className="card-text",
+                            ),
+                            html.P(
+                                "Les quartiers avec une densité de véhicules élevée peuvent bénéficier de "
+                                "solutions de transport en commun et de mobilité douce.",
+                                className="card-text",
+                            ),
+                        ],
+                        id="transportation-pop-text",
+                    ),
+                    dcc.Graph(
+                        id="transportation-pop-map",
+                        figure=map_transport_pop(
+                            gdf_transport_pop, gdf_transport_pop_json
+                        ),
+                    ),
+
+                ],
+                cols=2,
+                style={"height": "100%"},
+            ),
+        ],
+    )
+
+
 def transport_kmeans_section():
     return dmc.Stack(
         [
@@ -213,6 +267,7 @@ def transport_kmeans_section():
 @callback(
     Output("transportation-age-map", "figure"),
     Output("transportation-type-map", "figure"),
+    Output("transportation-pop-map", "figure"),
     Output("transportation-kmeans-map", "figure"),
     Input("mantine-provider", "forceColorScheme"),
     # prevent_initial_call=True,
@@ -220,7 +275,8 @@ def transport_kmeans_section():
 def select_value(color_scheme):
     map = map_transport_age(gdf_transport_age, gdf_transport_age_json, color_scheme)
     map2 = map_transport_type(gdf_transport_type, gdf_transport_type_json, color_scheme)
-    map3 = map_transport_kmeans(
+    map3 = map_transport_pop(gdf_transport_pop, gdf_transport_pop_json, color_scheme)
+    map4 = map_transport_kmeans(
         gdf_transport_kmeans, gdf_transport_kmeans_json, color_scheme
     )
-    return map, map2, map3
+    return map, map2, map3, map4

@@ -100,6 +100,52 @@ def map_transport_type(
     return fig
 
 
+def map_transport_pop(
+    gdf: gpd.GeoDataFrame, gdf_json: str, color_scheme: str = "dark"
+) -> go.Figure:
+    fig = go.Figure(
+        go.Choroplethmapbox(
+            geojson=gdf_json,
+            locations=gdf.index,
+            z=gdf["Vehicles_Per_100"].astype(float),
+            colorscale="purples",
+            marker_opacity=0.7,
+            marker_line_width=0.5,
+            colorbar_title="Nombre de véhicules (%)",
+            text=gdf["Nom_Districte"]
+            + "<br>véhicules: "
+            + gdf["Vehicles_Per_100"].astype(str)
+            + "%",
+        )
+    )
+
+    fig.update_layout(
+        title_text="Carte: Nombre de véhicules par 100 habitants par district",
+        title_x=0,
+        mapbox_zoom=10.5,
+        mapbox_center=CENTER_BARCELONA,
+        margin={"r": 0, "t": 40, "l": 0, "b": 0},
+    )
+
+    if color_scheme != "dark":
+        fig.update_layout(
+            mapbox_style="carto-positron",
+            paper_bgcolor="white",
+            plot_bgcolor="white",
+            font=dict(color="black"),
+        )
+
+    else:
+        fig.update_layout(
+            mapbox_style="carto-darkmatter",
+            paper_bgcolor="#242424",
+            plot_bgcolor="#242424",
+            font=dict(color="white"),
+        )
+
+    return fig
+
+
 def map_transport_kmeans(
     gdf: gpd.GeoDataFrame, gdf_json: str, color_scheme: str = "dark"
 ) -> go.Figure:
@@ -138,12 +184,11 @@ def map_transport_kmeans(
                 mode="markers",
                 marker=dict(size=15, color=color),
                 name=f"Cluster {cluster}",
-
             )
         )
 
     fig.update_layout(
-        title_text="Carte: K-means clustering des districts en fonction de l'âge des véhicules et du pourcentage de véhicules verts",
+        title_text="Carte: K-means clustering des districts en fonction de l'âge des véhicules, du pourcentage de véhicules verts et du nombre de véhicules par 100 habitants",
         title_x=0,
         mapbox_zoom=10.5,
         mapbox_center=CENTER_BARCELONA,

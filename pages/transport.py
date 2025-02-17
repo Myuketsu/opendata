@@ -6,8 +6,10 @@ from data.load_and_process_data import (
     gdf_transport_age_json,
     gdf_transport_type,
     gdf_transport_type_json,
+    gdf_transport_kmeans,
+    gdf_transport_kmeans_json,
 )
-from view.transport import map_transport_age, map_transport_type
+from view.transport import map_transport_age, map_transport_type, map_transport_kmeans
 
 register_page(__name__, path="/transport", name="Transport", title="OPENDATA")
 
@@ -41,18 +43,32 @@ def layout():
 
 
 def figures():
-    return dmc.Group(
+    return dmc.Stack(
         [
-            dcc.Graph(
-                id="transportation-age-map",
-                figure=map_transport_age(gdf_transport_age, gdf_transport_age_json),
+            dmc.SimpleGrid(
+                [
+                    dcc.Graph(
+                        id="transportation-age-map",
+                        figure=map_transport_age(
+                            gdf_transport_age, gdf_transport_age_json
+                        ),
+                    ),
+                    dcc.Graph(
+                        id="transportation-type-map",
+                        figure=map_transport_type(
+                            gdf_transport_type, gdf_transport_type_json
+                        ),
+                    ),
+                ],
+                cols=2,
             ),
             dcc.Graph(
-                id="transportation-type-map",
-                figure=map_transport_type(gdf_transport_type, gdf_transport_type_json),
+                id="transportation-kmeans-map",
+                figure=map_transport_kmeans(
+                    gdf_transport_kmeans, gdf_transport_kmeans_json
+                ),
             ),
         ],
-        grow=True,
     )
 
 
@@ -62,10 +78,14 @@ def figures():
 @callback(
     Output("transportation-age-map", "figure"),
     Output("transportation-type-map", "figure"),
+    Output("transportation-kmeans-map", "figure"),
     Input("mantine-provider", "forceColorScheme"),
-    prevent_initial_call=True,
+    # prevent_initial_call=True,
 )
 def select_value(color_scheme):
     map = map_transport_age(gdf_transport_age, gdf_transport_age_json, color_scheme)
     map2 = map_transport_type(gdf_transport_type, gdf_transport_type_json, color_scheme)
-    return map, map2
+    map3 = map_transport_kmeans(
+        gdf_transport_kmeans, gdf_transport_kmeans_json, color_scheme
+    )
+    return map, map2, map3

@@ -1,3 +1,4 @@
+from sklearn.cluster import KMeans
 import pandas as pd
 import geopandas as gpd
 from shapely import wkt
@@ -121,9 +122,6 @@ def load_transport_age_data() -> gpd.GeoDataFrame:
     return gdf_merged, json.loads(gdf_merged.to_json())
 
 
-gdf_transport_age, gdf_transport_age_json = load_transport_age_data()
-
-
 def load_transport_type_data() -> gpd.GeoDataFrame:
     vtype_df = pd.read_csv(
         DATA_PATH + "/type_of_vehicle/2023/2023_Parc_vehicles_tipus_propulsio.csv"
@@ -162,4 +160,40 @@ def load_transport_type_data() -> gpd.GeoDataFrame:
     return gdf_merged, json.loads(gdf_merged.to_json())
 
 
+def load_kmeans_data(
+    transport_age: gpd.GeoDataFrame, transport_type: gpd.GeoDataFrame
+) -> gpd.GeoDataFrame:
+    gdf_age = transport_age.copy()
+    gdf_type = transport_type.copy()
+
+    gdf_age = gdf_age.rename(columns={"Percentage": "Age_Percentage"})
+    gdf_type = gdf_type.rename(columns={"Percentage": "Green_Percentage"})
+
+    gdf_age = gdf_age[["Nom_Districte", "Age_Percentage"]]
+    gdf_type = gdf_type[["Nom_Districte", "Green_Percentage"]]
+
+    gdf_kmean = gdf_age.merge(gdf_type, on="Nom_Districte", how="left")
+
+    kmeans = KMeans(n_clusters=3, random_state=0).fit(
+        gdf_kmean[["Age_Percentage", "Green_Percentage"]]
+    )
+
+    gdf_kmean["Cluster"] = kmeans.labels_
+
+    district_df = pd.read_csv(
+        DATA_PATH + "/district_zone/BarcelonaCiutat_Districtes.csv"
+    )
+
+    gdf = convert_wkt_to_geometry(district_df, "geometria_wgs84")
+    gdf = gdf.rename(columns={"nom_districte": "Nom_Districte"})
+
+    gdf_merged = gdf.merge(gdf_kmean, on="Nom_Districte", how="left")
+
+    return gdf_merged, json.loads(gdf_merged.to_json())
+
+
+gdf_transport_age, gdf_transport_age_json = load_transport_age_data()
 gdf_transport_type, gdf_transport_type_json = load_transport_type_data()
+gdf_transport_kmeans, gdf_transport_kmeans_json = load_kmeans_data(
+    gdf_transport_age, gdf_transport_type
+)

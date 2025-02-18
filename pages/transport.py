@@ -29,8 +29,7 @@ from view.transport import (
 
 register_page(__name__, path="/transport", name="Transport", title="OPENDATA")
 
-def layout():
-    pass
+
 def layout():
     return dmc.Paper(
         dmc.Stack(

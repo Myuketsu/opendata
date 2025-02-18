@@ -192,215 +192,215 @@ df_life_quality = load_life_quality_data()
 # --- Transport DATA ---
 
 
-# def load_transport_age_data() -> gpd.GeoDataFrame:
-#     vage_df = pd.read_csv(
-#         DATA_PATH + "/age_of_vehicle/2023/2023_Antiguitat_tipus_vehicle.csv"
-#     )
-#     district_df = pd.read_csv(
-#         DATA_PATH + "/district_zone/BarcelonaCiutat_Districtes.csv"
-#     )
+def load_transport_age_data() -> gpd.GeoDataFrame:
+    vage_df = pd.read_csv(
+        DATA_PATH + "/age_of_vehicle/2023/2023_Antiguitat_tipus_vehicle.csv"
+    )
+    district_df = pd.read_csv(
+        DATA_PATH + "/district_zone/BarcelonaCiutat_Districtes.csv"
+    )
 
-#     total_vehicles_per_district = (
-#         vage_df.groupby(["Nom_Districte"]).Nombre.sum().reset_index()
-#     )
-#     total_vehicles_per_district.columns = ["Nom_Districte", "Total_Vehicles"]
+    total_vehicles_per_district = (
+        vage_df.groupby(["Nom_Districte"]).Nombre.sum().reset_index()
+    )
+    total_vehicles_per_district.columns = ["Nom_Districte", "Total_Vehicles"]
 
-#     old_vehicles_per_district = (
-#         vage_df[vage_df.Antiguitat == "MÃ©s de 20 anys"]
-#         .groupby(["Nom_Districte"])
-#         .Nombre.sum()
-#         .reset_index()
-#     )
-#     old_vehicles_per_district.columns = ["Nom_Districte", "Vehicles_20_Any"]
+    old_vehicles_per_district = (
+        vage_df[vage_df.Antiguitat == "MÃ©s de 20 anys"]
+        .groupby(["Nom_Districte"])
+        .Nombre.sum()
+        .reset_index()
+    )
+    old_vehicles_per_district.columns = ["Nom_Districte", "Vehicles_20_Any"]
 
-#     merged = total_vehicles_per_district.merge(
-#         old_vehicles_per_district, on="Nom_Districte", how="left"
-#     )
-#     merged["Percentage"] = (merged["Vehicles_20_Any"] / merged["Total_Vehicles"]) * 100
-#     merged["Percentage"] = merged["Percentage"].map("{:,.2f}".format)
-#     merged = merged[merged.Nom_Districte != "No consta"]
-#     merged["Percentage"] = merged["Percentage"].astype(float)
+    merged = total_vehicles_per_district.merge(
+        old_vehicles_per_district, on="Nom_Districte", how="left"
+    )
+    merged["Percentage"] = (merged["Vehicles_20_Any"] / merged["Total_Vehicles"]) * 100
+    merged["Percentage"] = merged["Percentage"].map("{:,.2f}".format)
+    merged = merged[merged.Nom_Districte != "No consta"]
+    merged["Percentage"] = merged["Percentage"].astype(float)
 
-#     gdf = convert_wkt_to_geometry(district_df, "geometria_wgs84")
-#     gdf = gdf.rename(columns={"nom_districte": "Nom_Districte"})
+    gdf = convert_wkt_to_geometry(district_df, "geometria_wgs84")
+    gdf = gdf.rename(columns={"nom_districte": "Nom_Districte"})
 
-#     gdf_merged = gdf.merge(merged, on="Nom_Districte", how="left")
+    gdf_merged = gdf.merge(merged, on="Nom_Districte", how="left")
 
-#     return gdf_merged, json.loads(gdf_merged.to_json())
-
-
-# def load_transport_type_data() -> gpd.GeoDataFrame:
-#     vtype_df = pd.read_csv(
-#         DATA_PATH + "/type_of_vehicle/2023/2023_Parc_vehicles_tipus_propulsio.csv"
-#     )
-#     district_df = pd.read_csv(
-#         DATA_PATH + "/district_zone/BarcelonaCiutat_Districtes.csv"
-#     )
-
-#     vehuicles_per_district = (
-#         vtype_df.groupby(["Nom_Districte"]).Nombre.sum().reset_index()
-#     )
-#     vehuicles_per_district.columns = ["Nom_Districte", "Total_Vehicles"]
-
-#     green_vehicles_per_district = (
-#         vtype_df[
-#             (vtype_df.Tipus_Propulsio == "Elèctrica")
-#             | (vtype_df.Tipus_Propulsio == "Híbrid")
-#         ]
-#         .groupby(["Nom_Districte"])
-#         .Nombre.sum()
-#         .reset_index()
-#     )
-#     green_vehicles_per_district.columns = ["Nom_Districte", "Green_Vehicles"]
-
-#     merged = vehuicles_per_district.merge(
-#         green_vehicles_per_district, on="Nom_Districte", how="left"
-#     )
-#     merged["Percentage"] = (merged["Green_Vehicles"] / merged["Total_Vehicles"]) * 100
-#     merged["Percentage"] = merged["Percentage"].map("{:,.2f}".format)
-
-#     gdf = convert_wkt_to_geometry(district_df, "geometria_wgs84")
-#     gdf = gdf.rename(columns={"nom_districte": "Nom_Districte"})
-
-#     gdf_merged = gdf.merge(merged, on="Nom_Districte", how="left")
-
-#     return gdf_merged, json.loads(gdf_merged.to_json())
+    return gdf_merged, json.loads(gdf_merged.to_json())
 
 
-# def load_transport_pop_data() -> gpd.GeoDataFrame:
-#     vtype_df = pd.read_csv(
-#         DATA_PATH + "/type_of_vehicle/2023/2023_Parc_vehicles_tipus_propulsio.csv"
-#     )
-#     district_df = pd.read_csv(
-#         DATA_PATH + "/district_zone/BarcelonaCiutat_Districtes.csv"
-#     )
-#     pop_df = pd.read_csv(DATA_PATH + "/population/2023/2023_pad_mdbas.csv")
+def load_transport_type_data() -> gpd.GeoDataFrame:
+    vtype_df = pd.read_csv(
+        DATA_PATH + "/type_of_vehicle/2023/2023_Parc_vehicles_tipus_propulsio.csv"
+    )
+    district_df = pd.read_csv(
+        DATA_PATH + "/district_zone/BarcelonaCiutat_Districtes.csv"
+    )
 
-#     pop_per_district = pop_df.groupby(["Nom_Districte"]).Valor.sum().reset_index()
-#     pop_per_district.columns = ["Nom_Districte", "Population"]
+    vehuicles_per_district = (
+        vtype_df.groupby(["Nom_Districte"]).Nombre.sum().reset_index()
+    )
+    vehuicles_per_district.columns = ["Nom_Districte", "Total_Vehicles"]
 
-#     vehuicles_per_district = (
-#         vtype_df.groupby(["Nom_Districte"]).Nombre.sum().reset_index()
-#     )
-#     vehuicles_per_district.columns = ["Nom_Districte", "Total_Vehicles"]
+    green_vehicles_per_district = (
+        vtype_df[
+            (vtype_df.Tipus_Propulsio == "Elèctrica")
+            | (vtype_df.Tipus_Propulsio == "Híbrid")
+        ]
+        .groupby(["Nom_Districte"])
+        .Nombre.sum()
+        .reset_index()
+    )
+    green_vehicles_per_district.columns = ["Nom_Districte", "Green_Vehicles"]
 
-#     merged = vehuicles_per_district.merge(
-#         pop_per_district, on="Nom_Districte", how="left"
-#     )
-#     merged["Vehicles_Per_100"] = (merged["Total_Vehicles"] / merged["Population"]) * 100
-#     merged = merged[merged.Nom_Districte != "No consta"]
-#     merged["Vehicles_Per_100"] = merged["Vehicles_Per_100"].map("{:,.2f}".format)
+    merged = vehuicles_per_district.merge(
+        green_vehicles_per_district, on="Nom_Districte", how="left"
+    )
+    merged["Percentage"] = (merged["Green_Vehicles"] / merged["Total_Vehicles"]) * 100
+    merged["Percentage"] = merged["Percentage"].map("{:,.2f}".format)
 
-#     gdf = convert_wkt_to_geometry(district_df, "geometria_wgs84")
-#     gdf = gdf.rename(columns={"nom_districte": "Nom_Districte"})
+    gdf = convert_wkt_to_geometry(district_df, "geometria_wgs84")
+    gdf = gdf.rename(columns={"nom_districte": "Nom_Districte"})
 
-#     gdf_merged = gdf.merge(merged, on="Nom_Districte", how="left")
+    gdf_merged = gdf.merge(merged, on="Nom_Districte", how="left")
 
-#     return gdf_merged, json.loads(gdf_merged.to_json())
-
-
-# def load_kmeans_data(
-#     transport_age: gpd.GeoDataFrame,
-#     transport_type: gpd.GeoDataFrame,
-#     transport_pop: gpd.GeoDataFrame,
-# ) -> gpd.GeoDataFrame:
-#     gdf_age = transport_age.copy()
-#     gdf_type = transport_type.copy()
-#     gdf_pop = transport_pop.copy()
-
-#     gdf_age = gdf_age.rename(columns={"Percentage": "Age_Percentage"})
-#     gdf_type = gdf_type.rename(columns={"Percentage": "Green_Percentage"})
-#     gdf_pop = gdf_pop.rename(columns={"Vehicles_Per_100": "Vehicles_Per_100"})
-
-#     gdf_age = gdf_age[["Nom_Districte", "Age_Percentage"]]
-#     gdf_type = gdf_type[["Nom_Districte", "Green_Percentage"]]
-#     gdf_pop = gdf_pop[["Nom_Districte", "Vehicles_Per_100"]]
-
-#     gdf_kmean = gdf_age.merge(gdf_type, on="Nom_Districte", how="left")
-#     gdf_kmean = gdf_kmean.merge(gdf_pop, on="Nom_Districte", how="left")
-
-#     kmeans = KMeans(n_clusters=3, random_state=42).fit(
-#         gdf_kmean[["Age_Percentage", "Green_Percentage", "Vehicles_Per_100"]]
-#     )
-
-#     gdf_kmean["Cluster"] = kmeans.labels_
-
-#     district_df = pd.read_csv(
-#         DATA_PATH + "/district_zone/BarcelonaCiutat_Districtes.csv"
-#     )
-
-#     gdf = convert_wkt_to_geometry(district_df, "geometria_wgs84")
-#     gdf = gdf.rename(columns={"nom_districte": "Nom_Districte"})
-
-#     gdf_merged = gdf.merge(gdf_kmean, on="Nom_Districte", how="left")
-
-#     return gdf_merged, json.loads(gdf_merged.to_json())
+    return gdf_merged, json.loads(gdf_merged.to_json())
 
 
-# def load_transport_age_pie_data() -> pd.DataFrame:
-#     vage_df = pd.read_csv(
-#         DATA_PATH + "age_of_vehicle/2023/2023_Antiguitat_tipus_vehicle2.csv"
-#     )
+def load_transport_pop_data() -> gpd.GeoDataFrame:
+    vtype_df = pd.read_csv(
+        DATA_PATH + "/type_of_vehicle/2023/2023_Parc_vehicles_tipus_propulsio.csv"
+    )
+    district_df = pd.read_csv(
+        DATA_PATH + "/district_zone/BarcelonaCiutat_Districtes.csv"
+    )
+    pop_df = pd.read_csv(DATA_PATH + "/population/2023/2023_pad_mdbas.csv")
 
-#     return vage_df[["Antiguitat", "Nombre"]].groupby("Antiguitat", as_index=False).sum()
+    pop_per_district = pop_df.groupby(["Nom_Districte"]).Valor.sum().reset_index()
+    pop_per_district.columns = ["Nom_Districte", "Population"]
 
+    vehuicles_per_district = (
+        vtype_df.groupby(["Nom_Districte"]).Nombre.sum().reset_index()
+    )
+    vehuicles_per_district.columns = ["Nom_Districte", "Total_Vehicles"]
 
-# def load_transport_type_pie_data() -> pd.DataFrame:
-#     vtype_df = pd.read_csv(
-#         DATA_PATH + "type_of_vehicle/2023/2023_Parc_vehicles_tipus_propulsio2.csv"
-#     )
+    merged = vehuicles_per_district.merge(
+        pop_per_district, on="Nom_Districte", how="left"
+    )
+    merged["Vehicles_Per_100"] = (merged["Total_Vehicles"] / merged["Population"]) * 100
+    merged = merged[merged.Nom_Districte != "No consta"]
+    merged["Vehicles_Per_100"] = merged["Vehicles_Per_100"].map("{:,.2f}".format)
 
-#     return (
-#         vtype_df[["Tipus_Propulsio", "Nombre"]]
-#         .groupby("Tipus_Propulsio", as_index=False)
-#         .sum()
-#     )
+    gdf = convert_wkt_to_geometry(district_df, "geometria_wgs84")
+    gdf = gdf.rename(columns={"nom_districte": "Nom_Districte"})
 
+    gdf_merged = gdf.merge(merged, on="Nom_Districte", how="left")
 
-# def load_transport_pop_hist_data() -> pd.DataFrame:
-#     pop_df = pd.read_csv(DATA_PATH + "population/2023/2023_pad_mdbas.csv")
-#     superficie_df = pd.read_csv(DATA_PATH + "superficie/2021_superficie.csv")
-#     superficie_df = superficie_df.rename(
-#         columns={"SuperfÃ­cie (ha)": "Superficie (ha)"}
-#     )
-
-#     pop_grouped = (
-#         pop_df[["Nom_Districte", "Valor"]]
-#         .groupby("Nom_Districte", as_index=False)
-#         .sum()
-#     )
-#     superficie_grouped = (
-#         superficie_df[["Nom_Districte", "Superficie (ha)"]]
-#         .groupby("Nom_Districte", as_index=False)
-#         .sum()
-#     )
-
-#     return pop_grouped.merge(superficie_grouped, on="Nom_Districte", how="left")
+    return gdf_merged, json.loads(gdf_merged.to_json())
 
 
-# gdf_transport_age, gdf_transport_age_json = load_transport_age_data()
-# df_transport_age_pie = load_transport_age_pie_data()
-# df_transport_type_pie = load_transport_type_pie_data()
-# gdf_transport_type, gdf_transport_type_json = load_transport_type_data()
-# gdf_transport_pop, gdf_transport_pop_json = load_transport_pop_data()
-# df_transport_pop_hist = load_transport_pop_hist_data()
-# gdf_transport_kmeans, gdf_transport_kmeans_json = load_kmeans_data(
-#     gdf_transport_age, gdf_transport_type, gdf_transport_pop
-# )
+def load_kmeans_data(
+    transport_age: gpd.GeoDataFrame,
+    transport_type: gpd.GeoDataFrame,
+    transport_pop: gpd.GeoDataFrame,
+) -> gpd.GeoDataFrame:
+    gdf_age = transport_age.copy()
+    gdf_type = transport_type.copy()
+    gdf_pop = transport_pop.copy()
 
-# pourcentage_vehicules_20_ans = (
-#     gdf_transport_age.Vehicles_20_Any.sum()
-#     / gdf_transport_age.Total_Vehicles.sum()
-#     * 100
-# )
-# pourcentage_vehicules_verts = (
-#     gdf_transport_type.Green_Vehicles.sum()
-#     / gdf_transport_type.Total_Vehicles.sum()
-#     * 100
-# )
-# nombre_vehicules_par_100_habitants = (
-#     gdf_transport_pop.Total_Vehicles.sum() / gdf_transport_pop.Population.sum() * 100
-# )
+    gdf_age = gdf_age.rename(columns={"Percentage": "Age_Percentage"})
+    gdf_type = gdf_type.rename(columns={"Percentage": "Green_Percentage"})
+    gdf_pop = gdf_pop.rename(columns={"Vehicles_Per_100": "Vehicles_Per_100"})
+
+    gdf_age = gdf_age[["Nom_Districte", "Age_Percentage"]]
+    gdf_type = gdf_type[["Nom_Districte", "Green_Percentage"]]
+    gdf_pop = gdf_pop[["Nom_Districte", "Vehicles_Per_100"]]
+
+    gdf_kmean = gdf_age.merge(gdf_type, on="Nom_Districte", how="left")
+    gdf_kmean = gdf_kmean.merge(gdf_pop, on="Nom_Districte", how="left")
+
+    kmeans = KMeans(n_clusters=3, random_state=42).fit(
+        gdf_kmean[["Age_Percentage", "Green_Percentage", "Vehicles_Per_100"]]
+    )
+
+    gdf_kmean["Cluster"] = kmeans.labels_
+
+    district_df = pd.read_csv(
+        DATA_PATH + "/district_zone/BarcelonaCiutat_Districtes.csv"
+    )
+
+    gdf = convert_wkt_to_geometry(district_df, "geometria_wgs84")
+    gdf = gdf.rename(columns={"nom_districte": "Nom_Districte"})
+
+    gdf_merged = gdf.merge(gdf_kmean, on="Nom_Districte", how="left")
+
+    return gdf_merged, json.loads(gdf_merged.to_json())
+
+
+def load_transport_age_pie_data() -> pd.DataFrame:
+    vage_df = pd.read_csv(
+        DATA_PATH + "age_of_vehicle/2023/2023_Antiguitat_tipus_vehicle2.csv"
+    )
+
+    return vage_df[["Antiguitat", "Nombre"]].groupby("Antiguitat", as_index=False).sum()
+
+
+def load_transport_type_pie_data() -> pd.DataFrame:
+    vtype_df = pd.read_csv(
+        DATA_PATH + "type_of_vehicle/2023/2023_Parc_vehicles_tipus_propulsio2.csv"
+    )
+
+    return (
+        vtype_df[["Tipus_Propulsio", "Nombre"]]
+        .groupby("Tipus_Propulsio", as_index=False)
+        .sum()
+    )
+
+
+def load_transport_pop_hist_data() -> pd.DataFrame:
+    pop_df = pd.read_csv(DATA_PATH + "population/2023/2023_pad_mdbas.csv")
+    superficie_df = pd.read_csv(DATA_PATH + "superficie/2021_superficie.csv")
+    superficie_df = superficie_df.rename(
+        columns={"SuperfÃ­cie (ha)": "Superficie (ha)"}
+    )
+
+    pop_grouped = (
+        pop_df[["Nom_Districte", "Valor"]]
+        .groupby("Nom_Districte", as_index=False)
+        .sum()
+    )
+    superficie_grouped = (
+        superficie_df[["Nom_Districte", "Superficie (ha)"]]
+        .groupby("Nom_Districte", as_index=False)
+        .sum()
+    )
+
+    return pop_grouped.merge(superficie_grouped, on="Nom_Districte", how="left")
+
+
+gdf_transport_age, gdf_transport_age_json = load_transport_age_data()
+df_transport_age_pie = load_transport_age_pie_data()
+df_transport_type_pie = load_transport_type_pie_data()
+gdf_transport_type, gdf_transport_type_json = load_transport_type_data()
+gdf_transport_pop, gdf_transport_pop_json = load_transport_pop_data()
+df_transport_pop_hist = load_transport_pop_hist_data()
+gdf_transport_kmeans, gdf_transport_kmeans_json = load_kmeans_data(
+    gdf_transport_age, gdf_transport_type, gdf_transport_pop
+)
+
+pourcentage_vehicules_20_ans = (
+    gdf_transport_age.Vehicles_20_Any.sum()
+    / gdf_transport_age.Total_Vehicles.sum()
+    * 100
+)
+pourcentage_vehicules_verts = (
+    gdf_transport_type.Green_Vehicles.sum()
+    / gdf_transport_type.Total_Vehicles.sum()
+    * 100
+)
+nombre_vehicules_par_100_habitants = (
+    gdf_transport_pop.Total_Vehicles.sum() / gdf_transport_pop.Population.sum() * 100
+)
 
 # # --- Socio-economic DATA ---
 

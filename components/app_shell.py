@@ -137,7 +137,7 @@ def create_app_shell_navbar_children() -> list[dmc.NavLink, dmc.Divider]:
                 width=23,
                 color=dmc.DEFAULT_THEME["colors"]["blue"][6],
             ),
-            href="/life_quality",
+            href="https://opendata-barcelone0.onrender.com/life_quality",
             id={"type": "navlink_navbar", "index": "/life_quality"},
         ),
         dmc.NavLink(

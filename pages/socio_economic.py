@@ -1,7 +1,7 @@
 from dash import register_page, Output, Input, State, dcc, callback, html
 import dash_mantine_components as dmc
 
-from data.load_and_process_data import socio_eco_df, barri_df, pca, pca_df, inertia, kmeans_df
+from data.load_and_process_data import socio_eco_df, pca, pca_df, inertia
 from view.socio_economic import (
     elbow_graph, corr_circle,
 )

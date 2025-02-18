@@ -5,10 +5,6 @@ import plotly.express as px
 register_page(__name__, path="/", name="Menu", title="OPENDATA")
 
 
-def buttons():
-    return
-
-
 def layout():
     return dmc.Paper(
         dmc.Stack(

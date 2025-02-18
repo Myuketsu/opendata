@@ -1,6 +1,5 @@
 from dash import register_page, Output, Input, State, dcc, callback, html
 import dash_mantine_components as dmc
-import dash_bootstrap_components as dbc
 
 from data.load_and_process_data import (
     gdf_transport_age,

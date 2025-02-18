@@ -403,14 +403,6 @@ def load_transport_pop_data() -> gpd.GeoDataFrame:
     return gdf_merged, json.loads(gdf_merged.to_json())
 
 
-def load_transport_age_pie_data() -> pd.DataFrame:
-    vage_df = pd.read_csv(
-        DATA_PATH + "age_of_vehicle/2023/2023_Antiguitat_tipus_vehicle2.csv"
-    )
-
-    return vage_df[["Antiguitat", "Nombre"]].groupby("Antiguitat", as_index=False).sum()
-
-
 def load_kmeans_data(
     transport_age: gpd.GeoDataFrame,
     transport_type: gpd.GeoDataFrame,
@@ -449,10 +441,53 @@ def load_kmeans_data(
     return gdf_merged, json.loads(gdf_merged.to_json())
 
 
+def load_transport_age_pie_data() -> pd.DataFrame:
+    vage_df = pd.read_csv(
+        DATA_PATH + "age_of_vehicle/2023/2023_Antiguitat_tipus_vehicle2.csv"
+    )
+
+    return vage_df[["Antiguitat", "Nombre"]].groupby("Antiguitat", as_index=False).sum()
+
+
+def load_transport_type_pie_data() -> pd.DataFrame:
+    vtype_df = pd.read_csv(
+        DATA_PATH + "type_of_vehicle/2023/2023_Parc_vehicles_tipus_propulsio2.csv"
+    )
+
+    return (
+        vtype_df[["Tipus_Propulsio", "Nombre"]]
+        .groupby("Tipus_Propulsio", as_index=False)
+        .sum()
+    )
+
+
+def load_transport_pop_hist_data() -> pd.DataFrame:
+    pop_df = pd.read_csv(DATA_PATH + "population/2023/2023_pad_mdbas.csv")
+    superficie_df = pd.read_csv(DATA_PATH + "superficie/2021_superficie.csv")
+    superficie_df = superficie_df.rename(
+        columns={"SuperfÃ­cie (ha)": "Superficie (ha)"}
+    )
+
+    pop_grouped = (
+        pop_df[["Nom_Districte", "Valor"]]
+        .groupby("Nom_Districte", as_index=False)
+        .sum()
+    )
+    superficie_grouped = (
+        superficie_df[["Nom_Districte", "Superficie (ha)"]]
+        .groupby("Nom_Districte", as_index=False)
+        .sum()
+    )
+
+    return pop_grouped.merge(superficie_grouped, on="Nom_Districte", how="left")
+
+
 gdf_transport_age, gdf_transport_age_json = load_transport_age_data()
 df_transport_age_pie = load_transport_age_pie_data()
+df_transport_type_pie = load_transport_type_pie_data()
 gdf_transport_type, gdf_transport_type_json = load_transport_type_data()
 gdf_transport_pop, gdf_transport_pop_json = load_transport_pop_data()
+df_transport_pop_hist = load_transport_pop_hist_data()
 gdf_transport_kmeans, gdf_transport_kmeans_json = load_kmeans_data(
     gdf_transport_age, gdf_transport_type, gdf_transport_pop
 )

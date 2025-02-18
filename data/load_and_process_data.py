@@ -1,8 +1,11 @@
-from sklearn.cluster import KMeans
+import numpy as np
 import pandas as pd
 import geopandas as gpd
-from shapely import wkt
 import json
+
+from shapely import wkt
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
 
 DATA_PATH = "./data/"
 
@@ -467,3 +470,88 @@ pourcentage_vehicules_verts = (
 nombre_vehicules_par_100_habitants = (
     gdf_transport_pop.Total_Vehicles.sum() / gdf_transport_pop.Population.sum() * 100
 )
+
+# --- Socio-economic DATA ---
+
+def load_socio_economic_data() -> pd.DataFrame:
+    pop_df = pd.read_csv(DATA_PATH + '/pred/2021_pad_mdba_sexe_edat-1.csv')
+    income_df = pd.read_csv(DATA_PATH + '/pred/2021_renda_disponible_llars_per_persona.csv')
+    household_df = pd.read_csv(DATA_PATH + '/pred/2021_pad_dom_mdbas_n-persones.csv')
+    area_df = pd.read_csv(DATA_PATH + '/pred/2021_superficie.csv')
+
+    # Remplacement des valeurs censurées (inférieures à 5) par 2 (arbitraire)
+    pop_df['Valor'] = pop_df['Valor'].str.replace('..', '2').astype(int)
+
+    # Calcul l'âge moyen pour chaque barri
+    df: pd.DataFrame = pop_df.groupby(['Codi_Barri', 'Nom_Barri']).apply(lambda x: np.average(x['EDAT_1'], weights=x['Valor']), include_groups=False).sort_values(ascending=False).reset_index(name='Age_Mean')
+
+    # Calcul la proportion de femmes pour chaque barri
+    df = df.merge(pop_df.groupby('Codi_Barri').apply(lambda x: np.average(x['SEXE']-1, weights=x['Valor']), include_groups=False).sort_values(ascending=False).reset_index(name='Gender_Proportion'), on='Codi_Barri')
+
+    # Calcul la population de chaque barri
+    df = df.merge(pop_df.groupby('Codi_Barri')['Valor'].sum().sort_values(ascending=False).reset_index(name='Population'), on='Codi_Barri')
+
+    # Calcul le revenu disponible moyen pour les foyers de chaque barri
+    df = df.merge(income_df.groupby('Codi_Barri')['Import_Euros'].mean().sort_values(ascending=False).reset_index(name='Income_Mean'), on='Codi_Barri')
+
+    # Calcul le nombre moyen de personnes par foyer pour chaque barri
+    df =  df.merge(household_df.groupby('Codi_Barri').apply(lambda x: np.average(x['N_PERSONES_AGG'], weights=x['Valor']), include_groups=False).sort_values(ascending=False).reset_index(name='N_People_per_Household'), on='Codi_Barri')
+
+    # Ajout de la superficie de chaque barri
+    df = df.merge(area_df[['Codi_Barri', 'Superfície (ha)']], on='Codi_Barri')
+
+    # Calcul la densité de population pour chaque barri
+    df['Pop_Density'] = df['Population'] / df['Superfície (ha)']
+
+    # drop les colonnes inutiles
+    df = df.drop(columns=['Population', 'Superfície (ha)'])
+
+    return df
+
+
+def load_barri_data() -> gpd.GeoDataFrame:
+    barri_df = pd.read_csv('data/pred/BarcelonaCiutat_Barris.csv')
+    barri_df = convert_wkt_to_geometry(barri_df, 'geometria_wgs84')
+    barri_df.crs = 'EPSG:4326'
+
+    return barri_df
+
+
+def socio_economic_pca(df: pd.DataFrame) -> tuple:
+    # Standardize the data
+    X = df[['Age_Mean', 'Gender_Proportion', 'Income_Mean', 'N_People_per_Household', 'Pop_Density']].values
+    X = (X - X.mean(axis=0)) / X.std(axis=0)
+
+    # Apply PCA
+    pca = PCA(n_components=2)
+    X_pca = pca.fit_transform(X)
+
+    # Create a DataFrame with the PCA results
+    pca_df = pd.DataFrame(data=X_pca, columns=['PC1', 'PC2'])
+
+    return pca, pca_df
+
+
+def inertia_kmeans(df: pd.DataFrame) -> list:
+    # Calculate the sum of squared distances for a range of cluster numbers
+    inertia = []
+    K = range(1, 11)
+    for k in K:
+        kmeans = KMeans(n_clusters=k, random_state=0).fit(df)
+        inertia.append(kmeans.inertia_)
+
+    return inertia
+
+
+def socio_economic_kmeans(df: pd.DataFrame) -> pd.DataFrame:
+    kmeans_pca = KMeans(n_clusters=4, random_state=0).fit(df[['PC1', 'PC2']])
+    df['Cluster'] = kmeans_pca.labels_
+
+    return df
+
+socio_eco_df = load_socio_economic_data()
+barri_df = load_barri_data()
+pca, pca_df = socio_economic_pca(socio_eco_df)
+inertia = inertia_kmeans(pca_df)
+kmeans_df = socio_economic_kmeans(pca_df)
+# map_df = barri_df.merge(pca_df, left_on='codi_barri', right_on='Codi_Barri')

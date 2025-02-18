@@ -137,7 +137,7 @@ def create_app_shell_navbar_children() -> list[dmc.NavLink, dmc.Divider]:
                 width=23,
                 color=dmc.DEFAULT_THEME["colors"]["blue"][6],
             ),
-            href="https://opendata-barcelone0.onrender.com/life_quality",
+            href="/life_quality",
             id={"type": "navlink_navbar", "index": "/life_quality"},
         ),
         dmc.NavLink(
@@ -147,7 +147,7 @@ def create_app_shell_navbar_children() -> list[dmc.NavLink, dmc.Divider]:
                 width=23,
                 color=dmc.DEFAULT_THEME["colors"]["blue"][6],
             ),
-            href="/transport",
+            href="https://opendata-barcelone.onrender.com/transport",
             id={"type": "navlink_navbar", "index": "/transport"},
         ),
         dmc.NavLink(
@@ -157,7 +157,7 @@ def create_app_shell_navbar_children() -> list[dmc.NavLink, dmc.Divider]:
                 width=23,
                 color=dmc.DEFAULT_THEME["colors"]["blue"][6],
             ),
-            href="/socio-economic",
+            href="https://opendata-barcelone.onrender.com/socio-economic",
             id={"type": "navlink_navbar", "index": "/socio-economic"},
         ),
     ]

@@ -1,43 +1,86 @@
-from dash import register_page, dcc
+from dash import register_page, dcc, html
 import dash_mantine_components as dmc
 import plotly.express as px
 
-register_page(__name__, path='/', name='Menu', title='OPENDATA')
+register_page(__name__, path="/", name="Menu", title="OPENDATA")
+
 
 def buttons():
-    return 
+    return
+
 
 def layout():
     return dmc.Paper(
-        [
-            dmc.Group(
-                [
-                    dmc.Box(
-                        dmc.Group(
-                            [
-                                dmc.Button('Button 1', color='blue'),
-                                dmc.Button('Button 2', color='red'),
-                                dmc.Button('Button 3', color='green'),
-                            ],
-                            gap='xl',
-                            align='center',
-                            grow=True,
+        dmc.Stack(
+            [
+                dmc.Center(
+                    dmc.Text(
+                        "OPENDATA BARCELONE",
+                        c="blue",
+                        style={"fontSize": 80},
+                    )
+                ),
+                dmc.Group(
+                    [
+                        html.A(
+                            dmc.Tooltip(
+                                dmc.Avatar(
+                                    src="https://media.licdn.com/dms/image/v2/D4E35AQFSpIJW2hjW2A/profile-framedphoto-shrink_400_400/profile-framedphoto-shrink_400_400/0/1732919545126?e=1740456000&v=beta&t=GfbyYnSJ-ZbIpdTebBMQO92Cz-ZXFaoTMmejRXBt6jM",
+                                    size="xl",
+                                    radius="xl",
+                                ),
+                                label="Louis Delignac",
+                                position="bottom",
+                                opened=True,
+                                withArrow=True,
+                            ),
+                            href="https://www.linkedin.com/in/louis-delignac/",
+                            target="_blank",
                         ),
-                    ),
-                    dcc.Graph(figure=px.scatter_3d(
-                        px.data.iris(),
-                        color='species',
-                        x='sepal_width',
-                        y='sepal_length',
-                        z='petal_width',
-                        title='Iris Dataset'
-                    ), id={'type': 'graph', 'index': 'iris_line'}),
-                ],
-                justify='space-between',
-                grow=True,
-                gap='xl',
-            )
-        ],
-        withBorder=True,
-        p='md',
+                        html.A(
+                            dmc.Tooltip(
+                                dmc.Avatar(
+                                    src="https://media.licdn.com/dms/image/v2/D5603AQET8bVptdt2Zg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1669659984554?e=1745452800&v=beta&t=g-shxnYzX8fM9M1svwnsHjqG0XqvcBEL8a1Vx8DbJiQ",
+                                    size="xl",
+                                    radius="xl",
+                                ),
+                                label="Alexandre Leys",
+                                position="bottom",
+                                opened=True,
+                                withArrow=True,
+                            ),
+                            href="https://www.linkedin.com/in/alexandre-leys-bdx/",
+                            target="_blank",
+                        ),
+                        html.A(
+                            dmc.Tooltip(
+                                dmc.Avatar(
+                                    src="https://media.licdn.com/dms/image/v2/D4E03AQEK9KHQbK11_Q/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1721858475999?e=1745452800&v=beta&t=m4YgzLM6c02MywW3WrU5YOpYMZw8OD65LDdhK0Gzy_I",
+                                    size="xl",
+                                    radius="xl",
+                                ),
+                                label="Hamad Tria",
+                                position="bottom",
+                                opened=True,
+                                withArrow=True,
+                            ),
+                            href="https://www.linkedin.com/in/hamadtria/",
+                            target="_blank",
+                        ),
+                    ],
+                    justify="center",
+                    gap="64px",
+                    top="lg",
+                ),
+            ],
+            style={
+                "backgroundImage": "url(https://swello.com/fr/blog/wp-content/uploads/2019/11/barcelone-swello.jpg)",
+                "backgroundRepeat": "no-repeat",
+                "backgroundAttachment": "fixed",
+                "backgroundSize": f"100% 100%",
+            },
+            h="70vh",
+        ),
+        withBorder=False,
+        p="md",
     )

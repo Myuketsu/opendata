@@ -77,7 +77,7 @@ def create_app_shell_header() -> dmc.Group:
                         [
                             dmc.Group(
                                 [
-                                    dmc.Title("OPENDATA", c="blue"),
+                                    dmc.Title("OPENDATA BARCELONE", c="blue"),
                                 ]
                             )
                         ],

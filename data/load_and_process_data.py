@@ -177,118 +177,15 @@ gdf_air = load_air_data()
 # gdf_air_json = gdf_air.to_json()
 
 
-# --- TREES DATA ---
+# --- LIFE QUALITY DATA ---
 
 
-def load_trees_data() -> gpd.GeoDataFrame:
-    park_trees_df = pd.read_csv(
-        DATA_PATH + "trees/street_trees/2023_4T_OD_Arbrat_Viari_BCN.csv"
-    )
-    street_trees_df = pd.read_csv(
-        DATA_PATH + "trees/street_trees/2023_4T_OD_Arbrat_Viari_BCN.csv"
-    )
-    zone_trees_df = pd.read_csv(
-        DATA_PATH + "trees/zone_trees/2023_4T_OD_Arbrat_Zona_BCN.csv"
-    )
-
-    all_trees_df = pd.concat(
-        [park_trees_df, street_trees_df, zone_trees_df]
-    )  # Concatenate the three DataFrames
-
-    # Get the number of trees per district
-    trees_per_district = (
-        all_trees_df[["codi_districte", "nom_districte"]]
-        .value_counts(sort=1)
-        .reset_index()
-    )
-    trees_per_district.columns = ["Code", "District", "Number of Trees"]
-    trees_per_district.loc[len(trees_per_district.index)] = [
-        "0",
-        "TOTAL",
-        all_trees_df.shape[0],
-    ]
-
-    # Create a DataFrame with the areas of each district
-    district_areas_df = pd.DataFrame(
-        {
-            "District": [
-                "CIUTAT VELLA",
-                "EIXAMPLE",
-                "SANTS - MONTJUÏC",
-                "LES CORTS",
-                "SARRIÀ - SANT GERVASI",
-                "GRÀCIA",
-                "HORTA - GUINARDÓ",
-                "NOU BARRIS",
-                "SANT ANDREU",
-                "SANT MARTÍ",
-                "TOTAL",
-            ],
-            "Area": [
-                4.11,
-                7.46,
-                22.68,
-                6.02,
-                19.91,
-                4.19,
-                11.96,
-                8.05,
-                6.59,
-                10.39,
-                101.36,
-            ],
-        }
-    )
-
-    # Calculate the number of trees per km²
-    trees_per_district = trees_per_district.merge(district_areas_df, on="District")
-    trees_per_district["Trees per km²"] = (
-        trees_per_district["Number of Trees"] / trees_per_district["Area"]
-    )
-
-    district_df = pd.read_csv(
-        DATA_PATH + "district_zone/BarcelonaCiutat_Districtes.csv"
-    )
-
-    # Convert the WKT geometries to Shapely geometries
-    district_df = convert_wkt_to_geometry(district_df, "geometria_wgs84").set_crs(
-        epsg=4326
-    )
-
-    # Create a GeoDataFrame with the number of trees per district
-    district_df = district_df.merge(
-        trees_per_district, left_on="Codi_Districte", right_on="Code"
-    ).drop(columns=["geometria_etrs89", "District"])
-
-    gdf_trees = district_df.rename(
-        columns={
-            "Codi_Districte": "district_code",
-            "nom_districte": "district_name",
-        }
-    )[
-        [
-            "district_code",
-            "district_name",
-            "Number of Trees",
-            "Trees per km²",
-            "geometry",
-        ]
-    ]
-
-    gdf_trees = gdf_trees.astype(
-        {
-            "district_code": "category",
-            "district_name": "category",
-            "Number of Trees": "int32",
-            "Trees per km²": "float32",
-        }
-    )
-
-    return gdf_trees
+def load_life_quality_data() -> gpd.GeoDataFrame:
+    df = pd.read_csv(DATA_PATH + "quality_of_life/quality_of_life_per_district.csv")
+    return df
 
 
-gdf_trees = load_trees_data()
-
+df_life_quality = load_life_quality_data()
 
 # --- Transport DATA ---
 

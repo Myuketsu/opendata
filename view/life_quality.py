@@ -1,3 +1,4 @@
+import pandas as pd
 import geopandas as gpd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -268,3 +269,15 @@ def map_air_quality(gdf: gpd.GeoDataFrame, gdf_json: str, polluant: str) -> go.F
     map.get_root().html.add_child(folium.Element(legend_html))
 
     return map.get_root().render()
+
+# --- Life Quality ---
+
+def corrplot_score(df: pd.DataFrame, color_scheme: str = "dark") -> go.Figure:
+    # Calculate the correlation matrix and round to 2 decimals
+    corr_matrix = df[["score_NO2", "score_PM10", "score_PM2_5", "score_noise", "score_trees", "score_hospitals"]].corr().round(2)
+
+    # Create a heatmap using plotly
+    fig = px.imshow(corr_matrix, text_auto=True, aspect="auto", title="Matrice de corrélation des scores de qualité de vie")
+
+    # Show the plot
+    return fig

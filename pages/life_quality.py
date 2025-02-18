@@ -1,14 +1,14 @@
 from dash import register_page, Output, Input, State, dcc, callback, html
 import dash_mantine_components as dmc
 
-from data.load_and_process_data import gdf_air, gdf_noise
+from data.load_and_process_data import gdf_air, gdf_noise, df_life_quality
 from view.life_quality import (
-    map_air_quality,
     histo_air_rang,
     line_noise_level,
     histo_noise_sensors,
     noise_distribution,
     map_noise_sensors,
+    corrplot_score,
 )
 
 register_page(__name__, path="/life_quality", name="Qualité de vie", title="OPENDATA")
@@ -16,7 +16,13 @@ register_page(__name__, path="/life_quality", name="Qualité de vie", title="OPE
 
 def layout():
     return dmc.Stack(
-        [noise_level_layout(), air_quality_layout(), trees_quantity_layout()]
+        [
+            noise_level_layout(),
+            air_quality_layout(),
+            trees_quantity_layout(),
+            hospitals_layout(),
+            life_quality_layout(),
+        ]
     )
 
 
@@ -200,7 +206,7 @@ def air_quality_layout():
                 generate_air_quality_figures(),
             ]
         ),
-        withBorder=True,
+        withBorder=False,
         p="md",
     )
 
@@ -280,6 +286,86 @@ def trees_quantity_layout():
                 dmc.Text(
                     "L’analyse du graphique révèle que le centre-ville et les quartiers situés au nord de Barcelone présentent une densité d’arbres plus élevée, atteignant jusqu’à 6 400 arbres par km². Cette concentration est probablement due à une politique de verdissement renforcée dans ces zones, ainsi qu'à la présence de parcs et d'espaces verts aménagés. En revanche, les quartiers situés en périphérie sud et sud-ouest affichent une couverture arborée plus faible, avec des densités avoisinant 1 400 à 3 000 arbres par km². "
                 ),
+            ]
+        ),
+        withBorder=True,
+        p="md",
+    )
+
+
+# - HOSPITALS -
+
+
+def hospitals_layout():
+    return dmc.Paper(
+        dmc.Stack(
+            [
+                dmc.Title("Hôpitaux de Barcelone", order=1),
+                dmc.Text(
+                    "La carte suivante présente la distance moyenne des habitants à un hôpital pour différents districts. Les données montrent que les distances varient considérablement d'un district à l'autre. Cela suggère une disparité significative dans l'accessibilité des services de santé entre les différents districts. Les résidents des districts avec des distances moyennes plus courtes bénéficient d'un accès plus rapide aux soins hospitaliers, tandis que ceux des districts avec des distances plus longues pourraient rencontrer des difficultés supplémentaires en cas d'urgence médicale."
+                ),
+                dmc.Group(
+                    html.Iframe(
+                        id="hospitals-map",
+                        srcDoc=open(
+                            f"./assets/html/hospitals/barcelona_hospitals_mean_distances.html",
+                            "r",
+                            encoding="utf-8",
+                        ).read(),
+                        width="100%",
+                        height="450px",
+                        style={"border": "none"},
+                    ),
+                    grow=True,
+                ),
+                dmc.Text(
+                    "La carte a été construite en calculant la distance moyenne des habitants de chaque district à l'hôpital le plus proche. Pour ce faire, une méthode de simulation a été utilisée. Pour chaque district, des points aléatoires ont été générés à l'intérieur des limites géographiques du district. Pour chaque point généré, la distance au centre médical le plus proche a été calculée. Cette procédure a été répétée un grand nombre de fois (10 000 itérations) pour obtenir une estimation précise de la distance moyenne."
+                ),
+                dmc.Text(
+                    "Les distances calculées pour chaque point ont été additionnées, puis divisées par le nombre total de points pour obtenir la distance moyenne par district. Ces distances moyennes ont ensuite été associées aux codes des districts respectifs. Cette approche permet de simuler l'accessibilité des services de santé pour les habitants de chaque district, en tenant compte de la répartition spatiale des hôpitaux et des limites géographiques des districts."
+                ),
+            ]
+        ),
+        withBorder=False,
+        p="md",
+    )
+
+
+# - LIFE QUALITY -
+
+
+def life_quality_layout():
+    return dmc.Paper(
+        dmc.Stack(
+            [
+                dmc.Title("Qualité de vie à Barcelone en 2023", order=1),
+                dmc.Text("On va maintenant s'intéresser à la création d'une variable synthétique de qualité de vie pour chaque district de Barcelone à partir des variables précédentes."),
+                dmc.Title(
+                    "Création des scores des jeux de données précédents", order=4
+                ),
+                dmc.Text("Pour faciliter la comparaison et l'analyse des différentes variables, nous allons normaliser les données en créant des scores compris entre 0 et 1. Cette normalisation permettra de standardiser les valeurs, quelle que soit leur échelle d'origine, en les ramenant à une plage commune."),
+                dcc.Graph(
+                    id={"type": "graph", "index": "corrplot_score"},
+                    figure=corrplot_score(df_life_quality),
+                ),
+                dmc.Text("On observe que certains scores sont fortement corrélés, positivement ou négativement. Par exemple, le score_NO2 montre une forte corrélation négative avec le score_tree et le score_hospitals, suggérant que les districts avec plus d'arbre et un meilleur accès aux hôpitaux ont tendance à avoir des niveaux de NO2 plus faibles. De même, le score_PM2_5 est fortement corrélé négativement avec le score_tree, indiquant que les districts avec plus d'arbres ont généralement des niveaux de PM2_5 plus bas."),
+                dmc.Divider(),
+                dmc.Title("Qualité de vie par district", order=4),
+                dmc.Group(
+                    html.Iframe(
+                        id="life-quality-map",
+                        srcDoc=open(
+                            f"./assets/html/quality_of_life/quality_of_life_map.html",
+                            "r",
+                            encoding="utf-8",
+                        ).read(),
+                        width="100%",
+                        height="450px",
+                        style={"border": "none"},
+                    ),
+                    grow=True,
+                ),
+                dmc.Text("La carte permet de visualiser les disparités entre les districts, mettant en évidence les zones où la qualité de vie est plus élevée ou plus faible. Les zones avec des scores plus élevés indiquent de meilleures conditions de vie, telles qu'une pollution moindre, plus d'espaces verts, et un meilleur accès aux services de santé. À l'inverse, les districts avec des scores plus bas montrent une pollution plus élevée ou un accès plus difficiles aux espaces de santés.")
             ]
         ),
         withBorder=True,

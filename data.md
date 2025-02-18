@@ -33,9 +33,19 @@ Dans le cadre de notre analyse, nous avons exploité les données disponibles su
 ### Les données sur le transport
 
 - [Ancienneté des voitures à Barcelone](https://opendata-ajuntament.barcelona.cat/data/en/dataset/est-vehicles-antiguitat-tipus/resource/3513d837-208c-4bfe-9ae5-b78add813ac4)
-- [Population de Barcelone par quartier](https://opendata-ajuntament.barcelona.cat/data/en/dataset/pad_mdbas/resource/f70020ae-c41a-438d-8983-a372628c197b)
-- [Superficie des quartiers de Barcelone](https://opendata-ajuntament.barcelona.cat/data/es/dataset/est-superficie/resource/bb402991-6226-4b33-a901-7d23843ec9e1)
 - [Type de véhicules à Barcelone](https://opendata-ajuntament.barcelona.cat/data/en/dataset/est_vehicles_propulsio/resource/2af5282e-9826-46e2-9547-130ca6691c5e)
+
+***
+
+### Les données sur la population
+
+- [Population de Barcelone par quartier](https://opendata-ajuntament.barcelona.cat/data/en/dataset/pad_mdbas/resource/f70020ae-c41a-438d-8983-a372628c197b)
+
+***
+
+### Les données sur les quartiers
+
+- [Superficie des quartiers de Barcelone](https://opendata-ajuntament.barcelona.cat/data/es/dataset/est-superficie/resource/bb402991-6226-4b33-a901-7d23843ec9e1)
 
 ***
 

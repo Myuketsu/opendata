@@ -6,29 +6,39 @@ Dans le cadre de notre analyse, nous avons exploité les données disponibles su
 - [Forme quartiers](https://opendata-ajuntament.barcelona.cat/data/en/dataset/808daafa-d9ce-48c0-925a-fa5afdb1ed41/resource/b21fa550-56ea-4f4c-9adc-b8009381896e)
 
 ***
+
 ### Les données sur la qualité de vie (2023)
 
-##### Qualité de l'air :
+##### Qualité de l'air
+
 - [Qualité de l'air immission](https://opendata-ajuntament.barcelona.cat/data/en/dataset/mapes-immissio-qualitat-aire) et [Superficie de la zone à faibles émissions
 
-##### Bruit et nuisances sonores :
+##### Bruit et nuisances sonores
+
 - [Réseau de surveillance du bruit dans l'environnement](https://opendata-ajuntament.barcelona.cat/data/en/dataset/xarxasoroll-equipsmonitor-dades)
 - [Installations du réseau de surveillance du bruit dans l'environnement](https://opendata-ajuntament.barcelona.cat/data/en/dataset/xarxasoroll-equipsmonitor-instal)
 
-##### Espaces verts et arbres :
+##### Espaces verts et arbres
+
 - [Zone d'arbres](https://opendata-ajuntament.barcelona.cat/data/en/dataset/arbrat-zona)
 - [Arbres dans les rues](https://opendata-ajuntament.barcelona.cat/data/en/dataset/arbrat-viari)
 - [Arbres dans les parcs](https://opendata-ajuntament.barcelona.cat/data/en/dataset/arbrat-parcs)
 
-##### Données sur les hopitaux :
+##### Données sur les hopitaux
+
 - [Emplacement hôpitaux](https://opendata-ajuntament.barcelona.cat/data/en/dataset/sanitat-hospitals-atencio-primaria)
 
 ***
+
 ### Les données sur le transport
 
-A venir
+- [Ancienneté des voitures à Barcelone](https://opendata-ajuntament.barcelona.cat/data/en/dataset/est-vehicles-antiguitat-tipus/resource/3513d837-208c-4bfe-9ae5-b78add813ac4)
+- [Population de Barcelone par quartier](https://opendata-ajuntament.barcelona.cat/data/en/dataset/pad_mdbas/resource/f70020ae-c41a-438d-8983-a372628c197b)
+- [Superficie des quartiers de Barcelone](https://opendata-ajuntament.barcelona.cat/data/es/dataset/est-superficie/resource/bb402991-6226-4b33-a901-7d23843ec9e1)
+- [Type de véhicules à Barcelone](https://opendata-ajuntament.barcelona.cat/data/en/dataset/est_vehicles_propulsio/resource/2af5282e-9826-46e2-9547-130ca6691c5e)
 
 ***
+
 ### Les données socio-économiques
 
 - [Superficie barri](https://opendata-ajuntament.barcelona.cat/data/en/dataset/est-superficie/resource/bb402991-6226-4b33-a901-7d23843ec9e1)

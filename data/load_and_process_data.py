@@ -112,7 +112,7 @@ def load_noise_data() -> gpd.GeoDataFrame:
     return gdf
 
 
-gdf_noise = load_noise_data()
+gdf_noise: gpd.GeoDataFrame = pd.read_pickle("./data/noise_monitoring/noise_data.pkl")
 
 
 # --- AIR DATA ---
@@ -176,8 +176,7 @@ def load_air_data() -> gpd.GeoDataFrame:
     return gdf.set_crs(epsg=25831).to_crs(epsg=4326)
 
 
-gdf_air = load_air_data()
-# gdf_air_json = gdf_air.to_json()
+gdf_air: gpd.GeoDataFrame = pd.read_pickle("./data/air_quality/air_data.pkl")
 
 
 # --- LIFE QUALITY DATA ---

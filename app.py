@@ -2,7 +2,7 @@ from dash import Dash, _dash_renderer
 import dash_mantine_components as dmc
 
 import warnings
-warnings.simplefilter(action='ignore', category=FutureWarning)
+warnings.filterwarnings("ignore")
 
 _dash_renderer._set_react_version("18.2.0")
 
@@ -12,7 +12,7 @@ app = Dash(
     __name__,
     use_pages=True,
     prevent_initial_callbacks=True,
-    suppress_callback_exceptions=False,
+    suppress_callback_exceptions=True,
     external_stylesheets=dmc.styles.ALL,
 )
 

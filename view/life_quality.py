@@ -63,6 +63,7 @@ def noise_distribution(
         gdf.drop_duplicates("id").value_counts("source").reset_index(),
         names="source",
         values="count",
+        template=get_color_theme(color_scheme),
         height=400,
         width=400,
     )

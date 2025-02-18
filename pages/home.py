@@ -72,13 +72,15 @@ def layout():
                     gap="64px",
                     top="lg",
                 ),
+                dmc.Center(
+                    html.Img(
+                        src="https://swello.com/fr/blog/wp-content/uploads/2019/11/barcelone-swello.jpg",
+                        width="650px",
+                        height="400px",
+                        style={"borderRadius": "10px", "marginTop": "50px"},
+                    ),
+                ),
             ],
-            style={
-                "backgroundImage": "url(https://swello.com/fr/blog/wp-content/uploads/2019/11/barcelone-swello.jpg)",
-                "backgroundRepeat": "no-repeat",
-                "backgroundAttachment": "fixed",
-                "backgroundSize": f"100% 100%",
-            },
             h="70vh",
         ),
         withBorder=False,

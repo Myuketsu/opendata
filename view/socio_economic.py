@@ -10,10 +10,11 @@ def elbow_graph(inertia) -> go.Figure:
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=list(range(1, len(inertia) + 1)), y=inertia, mode='lines+markers', marker=dict(color='blue')))
     fig.update_layout(
-        title='Elbow Method For Optimal k',
+        title='Méthode du coude pour un k optimal',
         xaxis_title='Number of clusters',
         yaxis_title='Inertia',
-        template='plotly_white'
+        template='plotly_white',
+        height=350,
     )
     
     return fig

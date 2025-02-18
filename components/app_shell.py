@@ -106,7 +106,7 @@ def create_app_shell_navbar_children() -> list[dmc.NavLink, dmc.Divider]:
     """
     return [
         dmc.NavLink(
-            label="Contexte",
+            label="Données",
             leftSection=DashIconify(
                 icon="material-symbols:info-outline-rounded",
                 width=23,

@@ -383,6 +383,7 @@ def life_quality_layout():
     prevent_initial_call=True,
 )
 def noise_callback(checked, color_scheme):
+    print(color_scheme)
     return noise_distribution(gdf_noise, checked, color_scheme)
 
 

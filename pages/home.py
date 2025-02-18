@@ -1,6 +1,5 @@
 from dash import register_page, dcc, html
 import dash_mantine_components as dmc
-import plotly.express as px
 
 register_page(__name__, path="/", name="Menu", title="OPENDATA")
 

@@ -1,11 +1,20 @@
 import geopandas as gpd
 import plotly.express as px
+import pandas as pd
 import plotly.graph_objects as go
+import plotly.io as pio
 
 CENTER_BARCELONA = {"lat": 41.3951, "lon": 2.1334}
 
-# --- Transport ---
 
+def get_color_theme(color_scheme: str):
+    return (
+        pio.templates["mantine_light"]
+        if color_scheme == "light"
+        else pio.templates["mantine_dark"]
+    )
+
+# --- Transport ---
 
 def map_transport_age(
     gdf: gpd.GeoDataFrame, gdf_json: str, color_scheme: str = "dark"
@@ -45,6 +54,35 @@ def map_transport_age(
     else:
         fig.update_layout(
             mapbox_style="carto-darkmatter",
+            paper_bgcolor="#242424",
+            plot_bgcolor="#242424",
+            font=dict(color="white"),
+        )
+
+    return fig
+
+def pie_transport_age(
+    df: pd.DataFrame, color_scheme: str = "dark"
+) -> px.pie:
+    fig = px.pie(
+        df, 
+        names="Antiguitat", 
+        values="Nombre", 
+        title="Répartition des véhicules par âge",
+        color_discrete_sequence=px.colors.sequential.Reds
+    )
+    fig.update_traces(textinfo="percent+label")
+    fig.update_layout(title_x=0)
+
+    if color_scheme != "dark":
+        fig.update_layout(
+            template="plotly",
+            paper_bgcolor="white",
+            plot_bgcolor="white",
+        )
+    else:
+        fig.update_layout(
+            template="plotly_dark",
             paper_bgcolor="#242424",
             plot_bgcolor="#242424",
             font=dict(color="white"),

@@ -5,6 +5,7 @@ import dash_bootstrap_components as dbc
 from data.load_and_process_data import (
     gdf_transport_age,
     gdf_transport_age_json,
+    df_transport_age_pie,
     gdf_transport_type,
     gdf_transport_type_json,
     gdf_transport_pop,
@@ -17,6 +18,7 @@ from data.load_and_process_data import (
 )
 from view.transport import (
     map_transport_age,
+    pie_transport_age,
     map_transport_type,
     map_transport_kmeans,
     map_transport_pop,
@@ -99,25 +101,35 @@ def transport_age_section():
         [
             dmc.SimpleGrid(
                 [
-                    dmc.Text(
+                    dmc.SimpleGrid(
                         [
-                            html.H4(
-                                "🚗 Analyse de l'âge des véhicules",
-                                className="card-title",
+                            dmc.Text(
+                                [
+                                    html.H4(
+                                        "🚗 Analyse de l'âge des véhicules",
+                                        className="card-title",
+                                    ),
+                                    html.P(
+                                        "Cette carte montre le pourcentage de véhicules de plus de 20 ans par district. "
+                                        "Les véhicules anciens sont un facteur clé de pollution atmosphérique, "
+                                        "contribuant aux particules fines et aux oxydes d’azote (NOx).",
+                                        className="card-text",
+                                    ),
+                                    html.P(
+                                        "Les zones affichant des pourcentages élevés indiquent une flotte vieillissante, "
+                                        "ce qui peut être un indicateur de pollution accrue.",
+                                        className="card-text",
+                                    ),
+                                ],
+                                id="transportation-age-text",
                             ),
-                            html.P(
-                                "Cette carte montre le pourcentage de véhicules de plus de 20 ans par district. "
-                                "Les véhicules anciens sont un facteur clé de pollution atmosphérique, "
-                                "contribuant aux particules fines et aux oxydes d’azote (NOx).",
-                                className="card-text",
-                            ),
-                            html.P(
-                                "Les zones affichant des pourcentages élevés indiquent une flotte vieillissante, "
-                                "ce qui peut être un indicateur de pollution accrue.",
-                                className="card-text",
+                            dcc.Graph(
+                                id="transportation-age-pie",
+                                figure=pie_transport_age(
+                                    df_transport_age_pie
+                                ),
                             ),
                         ],
-                        id="transportation-age-text",
                     ),
                     dcc.Graph(
                         id="transportation-age-map",
@@ -266,6 +278,7 @@ def transport_kmeans_section():
 
 @callback(
     Output("transportation-age-map", "figure"),
+    Output("transportation-age-pie", "figure"),
     Output("transportation-type-map", "figure"),
     Output("transportation-pop-map", "figure"),
     Output("transportation-kmeans-map", "figure"),
@@ -274,9 +287,10 @@ def transport_kmeans_section():
 )
 def select_value(color_scheme):
     map = map_transport_age(gdf_transport_age, gdf_transport_age_json, color_scheme)
+    pie = pie_transport_age(df_transport_age_pie, color_scheme)
     map2 = map_transport_type(gdf_transport_type, gdf_transport_type_json, color_scheme)
     map3 = map_transport_pop(gdf_transport_pop, gdf_transport_pop_json, color_scheme)
     map4 = map_transport_kmeans(
         gdf_transport_kmeans, gdf_transport_kmeans_json, color_scheme
     )
-    return map, map2, map3, map4
+    return map, pie, map2, map3, map4

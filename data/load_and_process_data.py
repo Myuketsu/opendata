@@ -400,6 +400,14 @@ def load_transport_pop_data() -> gpd.GeoDataFrame:
     return gdf_merged, json.loads(gdf_merged.to_json())
 
 
+def load_transport_age_pie_data() -> pd.DataFrame:
+    vage_df = pd.read_csv(
+        DATA_PATH + "age_of_vehicle/2023/2023_Antiguitat_tipus_vehicle2.csv"
+    )
+
+    return vage_df[["Antiguitat", "Nombre"]].groupby("Antiguitat", as_index=False).sum()
+
+
 def load_kmeans_data(
     transport_age: gpd.GeoDataFrame,
     transport_type: gpd.GeoDataFrame,
@@ -439,6 +447,7 @@ def load_kmeans_data(
 
 
 gdf_transport_age, gdf_transport_age_json = load_transport_age_data()
+df_transport_age_pie = load_transport_age_pie_data()
 gdf_transport_type, gdf_transport_type_json = load_transport_type_data()
 gdf_transport_pop, gdf_transport_pop_json = load_transport_pop_data()
 gdf_transport_kmeans, gdf_transport_kmeans_json = load_kmeans_data(
